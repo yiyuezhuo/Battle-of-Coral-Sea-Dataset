@@ -1,7 +1,8 @@
 module BattleOfCoralSeaUtils
 
 export load_dataset, Trajectory, interpolate_records, load_shapefile, show_crop, 
-    show_trace!, show_fleets!, get_pos, TimeStampToFloat, TimeStamp
+    show_trace!, show_fleets!, get_pos, time_stamp_to_float, TimeStamp, expand_plans,
+    get_scouting
 
 using Shapefile, Plots
 using JSON

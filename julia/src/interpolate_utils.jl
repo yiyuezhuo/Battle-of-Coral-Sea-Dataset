@@ -9,12 +9,12 @@ end
 
 const EARTH_RADIUS = 6372.8
 
-TimeStampToFloat(t::TimeStamp) = TimeStampToFloat(t.day, t.hour, t.minute)
-TimeStampToFloat(day::Int, hour::Int, minute::Int) = Float64(day * 24 * 60 + hour * 60 + minute)
-TimeStampToFloat(t::Tuple{Int, Int, Int}) = TimeStampToFloat(t[1], t[2], t[3])
+time_stamp_to_float(t::TimeStamp) = time_stamp_to_float(t.day, t.hour, t.minute)
+time_stamp_to_float(day::Int, hour::Int, minute::Int) = Float64(day * 24 * 60 + hour * 60 + minute)
+time_stamp_to_float(t::Tuple{Int, Int, Int}) = time_stamp_to_float(t[1], t[2], t[3])
 
 earth_dist_haversine(x1, y1, x2, y2) = haversine([y1, x1], [y2, x2], EARTH_RADIUS)
-earth_dist_geodesics(x1, y1, x2, y2) = inverse_deg(x1, y1, x2, y2)[1] / 1000 # m to km
+earth_dist_geodesics(x1, y1, x2, y2) = inverse_deg(x1, y1, x2, y2)[1]
 
 # const earth_dist = earth_dist_haversine
 # earth_dist(x1, y1, x2, y2) = earth_dist_geodesics(x1, y1, x2, y2)
@@ -25,14 +25,14 @@ function gen_interpolate_records(earth_dist)
         stack = Record[]
         
         r_seq = RecordInterpolated[
-            RecordInterpolated(records[1].x, records[1].y, TimeStampToFloat(records[1].t), 0)]
+            RecordInterpolated(records[1].x, records[1].y, time_stamp_to_float(records[1].t), 0)]
         for record in records[2:end]
             if record.t === nothing
                 push!(stack, record)
             else
                 last_key_record = r_seq[end]
-                # key_record = RecordInterpolated(record.x, record.y, TimeStampToFloat(record.t), 0)
-                key_record_t = TimeStampToFloat(record.t)
+                # key_record = RecordInterpolated(record.x, record.y, time_stamp_to_float(record.t), 0)
+                key_record_t = time_stamp_to_float(record.t)
                 if length(stack) > 0
                     dist_l = Vector{Float64}(undef, length(stack))
                     last_record = stack[1]
@@ -89,7 +89,7 @@ end
 function interpolate_record_geodesics(t, left_record, right_record)
     left_w = 1 - (t - left_record.t) / (right_record.t - left_record.t)
     _dist, azu, _azu_back = inverse_deg(left_record.x, left_record.y, right_record.x, right_record.y)
-    lon1, lat1, backazimuth = forward_deg(left_record.x, left_record.y, azu, _dist * left_w)
+    lon1, lat1, backazimuth = forward_deg(left_record.x, left_record.y, azu, _dist * left_w) # km to m
     return [lon1, lat1]
 end
 
@@ -131,3 +131,102 @@ end
 const get_pos_haversine = gen_get_pos(interpolate_record_haversine)
 const get_pos_geodesics = gen_get_pos(interpolate_record_geodesics)
 const get_pos = get_pos_geodesics
+
+#=
+raw example
+
+Dict{String,Any} with 8 entries:
+  "name"     => "MO Carrier Striking force 1"
+  "st"       => Any[4, 8, 0]
+  "sp"       => "MO Carrier Striking force"
+  "rot_dist" => 37000
+  "paths"    => Dict{String,Any}("140"=>Dict{String,Any}(),"130"=>Dict{String,A…
+  "dist"     => 460000
+  "rot"      => 90
+  "et"       => Any[4, 11, 50]
+
+paths will be expanded to multiple path with similar parameter (mapped value define
+unique overrided value).
+=#
+
+struct ScoutingPlan
+    # name::String, name is the key of the map which value is a collection of ScoutingPlan 
+    st::Float64 # start time
+    sp::Tuple{Float64, Float64} # start point
+    et::Float64 # end time
+    ep::Tuple{Float64, Float64} # end point
+    azimuth::Float64 # degree
+    dist::Float64 # km, while original data is encoded as m
+    rot::Float64 # degree
+    rot_dist::Float64 # km
+end
+
+function expand_plans(scouting_plans, 
+                      name_to_record_int_vec::Dict{String, Vector{RecordInterpolated}})
+    rd = Dict{String, Vector{ScoutingPlan}}()
+
+    for plan in scouting_plans
+        pl = ScoutingPlan[]
+
+        plan = copy(plan)
+
+        name = pop!(plan, "name")
+        paths = pop!(plan, "paths")
+        for (azumuth, path) in paths
+            d = Dict(plan..., path...)
+
+            st = time_stamp_to_float(d["st"]...)
+            et = time_stamp_to_float(d["et"]...)
+            if typeof(d["sp"]) == String
+                spv = name_to_record_int_vec[d["sp"]]
+                sp = get_pos(spv, st)
+                ep = get_pos(spv, et)
+            else
+                sp = d["sp"]
+                if haskey(d, "ep")
+                    ep = d["ep"]
+                else
+                    ep = sp
+                end
+            end
+
+            p = ScoutingPlan(st, Tuple(sp), et, Tuple(ep), Meta.parse(azumuth), 
+                             d["dist"] / 1000, d["rot"], d["rot_dist"] / 1000) # convert m to km
+            push!(pl, p)
+        end
+        rd[name] = pl
+    end
+
+    return rd
+end
+
+function get_scouting(sp, ep, azimuth, dist, rot, rot_dist)
+    xy = forward_deg(sp[1], sp[2], azimuth, dist)
+    xy2 = forward_deg(xy[1], xy[2], azimuth + rot, rot_dist)
+    d3, azimuth_back, azimuth_back_inv = inverse_deg(xy2[1], xy2[2], ep[1], ep[2])
+    sum_dist = dist + rot_dist + d3
+    pt1 = dist / sum_dist
+    pt2 = (dist + rot_dist) / sum_dist
+
+    function scouting(p)
+        if p < pt1
+            rxy = forward_deg(sp[1], sp[2], azimuth,  dist * p / pt1)
+        elseif p < pt2
+            rxy = forward_deg(xy[1], xy[2], azimuth + rot, rot_dist * (p-pt1)/(pt2-pt1))
+        else
+            rxy = forward_deg(xy2[1], xy2[2], azimuth_back, d3 * (p-pt2) / (1-pt2))
+        end
+        return rxy
+    end
+    return scouting
+end
+
+function get_scouting(sp::ScoutingPlan)
+    return get_scouting(sp.sp, sp.ep, sp.azimuth, sp.dist, sp.rot, sp.rot_dist)
+end
+
+function take_xy(xya_l)
+    x = [xya[1] for xya in xya_l]
+    y = [xya[2] for xya in xya_l]
+    return x, y
+end

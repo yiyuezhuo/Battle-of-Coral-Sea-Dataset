@@ -2,7 +2,7 @@
 
 The dataset include fleet moving and scouting record. The data is not ensured to be very accurate, but the error will not be too large.
 
-I build the dataset for my own research.
+I build the dataset for my own research purpose.
 
 ## Examples
 
@@ -36,7 +36,7 @@ names = map(x->x.name, trajectories)
 # Plot trace with fleet position in timestamp 6500 ()
 plt = show_crop(sp50, 150, -20, 165, 0, raw=true)
 show_trace!(trajectories)
-show_fleets!(seqs, names, TimeStampToFloat(5, 12, 0)) # 12:00 5 May
+show_fleets!(seqs, names, time_stamp_to_float(5, 12, 0)) # 12:00 5 May
 plt
 ```
 
