@@ -36,3 +36,10 @@ end
 function load_shapefile(path)
     return Shapefile.shapes(Shapefile.Table(path))
 end
+
+function load_shapefile()
+    # require full file structure
+    shape_path = joinpath(splitpath(pathof(BattleOfCoralSeaUtils))[1:end-3]..., 
+                          "shape_data", "ne_50m_land.shp")
+    return load_shapefile(shape_path)
+end

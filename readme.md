@@ -14,19 +14,30 @@ I build the dataset for my own research.
 
 using BattleOfCoralSeaUtils
 
-tl = load_dataset("fleets.json")
-tra_l = Trajectory.(tl)
+fleets = load_dataset("fleets.json")
+trajectories = Trajectory.(tl)
+
+sp50 = load_shapefile()
 
 plt = show_crop(sp50, 150, -20, 165, 0, raw=true)
-show_trace!(tra_l)
+show_trace!(trajectories)
 plt
 ```
 
 #### Interpolate
 
 ```julia
-get_pos(interpolate_records(tra_l[1].seq), 6500.)
+get_pos(interpolate_records(trajectories[1].seq), 6500.)
 # [157.742, -4.69623]
+
+seqs = map(x->interpolate_records(x.seq), trajectories)
+names = map(x->x.name, trajectories)
+
+# Plot trace with fleet position in timestamp 6500 ()
+plt = show_crop(sp50, 150, -20, 165, 0, raw=true)
+show_trace!(trajectories)
+show_fleets!(seqs, names, TimeStampToFloat(5, 12, 0)) # 12:00 5 May
+plt
 ```
 
 #### Pluto animation

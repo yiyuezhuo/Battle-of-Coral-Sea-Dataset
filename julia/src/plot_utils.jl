@@ -33,7 +33,8 @@ function show_trace!(tl::Vector{Trajectory})
     end
 end
 
-function show_fleets!(fleets::Vector{Vector{RecordInterpolated}}, names::Vector{String}, t::Float64)
+function show_fleets!(fleets::Vector{Vector{RecordInterpolated}}, 
+                      names::Vector{String}, t::Float64)
     for (fleet, name) in zip(fleets, names)
         if contains(fleet, t)
             x, y = get_pos(fleet, t)
