@@ -174,9 +174,7 @@ version = "1.0.0"
 
 [[JSON]]
 deps = ["Dates", "Mmap", "Parsers", "Unicode"]
-git-tree-sha1 = "8c022dff081bbbc4c5363c9eaeaa993de77a2913"
-repo-rev = "yyz_compat"
-repo-url = "https://github.com/yiyuezhuo/JSON.jl.git"
+git-tree-sha1 = "81690084b6198a2e1da36fcfda16eeca9f9f24e4"
 uuid = "682c06a0-de6a-54ab-a142-c8b1cf79cde6"
 version = "0.21.1"
 
@@ -311,9 +309,9 @@ version = "1.0.2"
 
 [[RecipesPipeline]]
 deps = ["Dates", "NaNMath", "PlotUtils", "RecipesBase"]
-git-tree-sha1 = "84ff6ab4187fb812522e7e3e6447107110171e62"
+git-tree-sha1 = "4a325c9bcc2d8e62a8f975b9666d0251d53b63b9"
 uuid = "01d81517-befc-4cb6-b9ec-a95719d0359c"
-version = "0.1.12"
+version = "0.1.13"
 
 [[Reexport]]
 deps = ["Pkg"]

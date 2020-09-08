@@ -4,5 +4,3 @@ A tiny Julia package, you can `dev` or `add` it from local as "usual" (Ok, in fa
 
 The package is made like this since I don't think a utils collection is suitable to become a package, but Julia's current structure make you to push all of things into a package.
 
-`Manifest.toml` is included since we use a un-standard `JSON` package version.
-
