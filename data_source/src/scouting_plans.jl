@@ -20,11 +20,11 @@ scouting_plans = [
         sp="MO Carrier Striking force", st=(7, 4, 0), et=(7, 10, 30),
         dist=463*1000, rot=90,
         paths=Dict(
-            130=>(rot_dist=55560,), 180=>(rot_dist=55560,), 200=>(rot_dist=55560,), # Zuikaku
+            180=>(rot_dist=55560,), 200=>(rot_dist=55560,), 220=>(rot_dist=55560,), # Zuikaku
             235=>(rot_dist=74*1000,), 250=>(rot_dist=74*1000,), 265=>(rot_dist=74*1000,) # Shōkaku
         )
     ),
-    #= scouting after 7 May, lack of infomation?
+    #= scouting afternoon 7 May, lack of infomation?
     (
         name="MO Carrier Striking force 4",
         sp="MO Carrier Striking force", st=(7, 4, 0), et=(7, 10, 30),
@@ -38,7 +38,7 @@ scouting_plans = [
     (
         name="Rossel 7 May",
         sp=(154, -11), st=(7, 4, 0), et=(7, 10, 30), # concrete time?
-        dist=277800, rot=90, rot_dist= 200 * 1000, # unknown rot_dist, make it determined automatically?
+        dist=277800, rot=90, rot_dist= 100 * 1000, # unknown rot_dist, make it determined automatically?
         paths=Dict(
             90=>(;), 130=>(;), 170=>(;), 210=>(;)
         )

@@ -13,6 +13,8 @@ time_stamp_to_float(t::TimeStamp) = time_stamp_to_float(t.day, t.hour, t.minute)
 time_stamp_to_float(day::Int, hour::Int, minute::Int) = Float64(day * 24 * 60 + hour * 60 + minute)
 time_stamp_to_float(t::Tuple{Int, Int, Int}) = time_stamp_to_float(t[1], t[2], t[3])
 
+float_to_time_stamp(t::Real) = TimeStamp(t ÷ (24 * 60), mod(t ÷ 60, 24), mod(t, 60))
+
 earth_dist_haversine(x1, y1, x2, y2) = haversine([y1, x1], [y2, x2], EARTH_RADIUS)
 earth_dist_geodesics(x1, y1, x2, y2) = inverse_deg(x1, y1, x2, y2)[1]
 
@@ -87,9 +89,9 @@ function interpolate_record_haversine(t, left_record, right_record)
 end
 
 function interpolate_record_geodesics(t, left_record, right_record)
-    left_w = 1 - (t - left_record.t) / (right_record.t - left_record.t)
+    p = (t - left_record.t) / (right_record.t - left_record.t)
     _dist, azu, _azu_back = inverse_deg(left_record.x, left_record.y, right_record.x, right_record.y)
-    lon1, lat1, backazimuth = forward_deg(left_record.x, left_record.y, azu, _dist * left_w) # km to m
+    lon1, lat1, backazimuth = forward_deg(left_record.x, left_record.y, azu, _dist * p)
     return [lon1, lat1]
 end
 
