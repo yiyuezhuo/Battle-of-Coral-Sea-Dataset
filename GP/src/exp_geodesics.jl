@@ -1,5 +1,4 @@
 
-
 # Define Distances.Metric
 
 struct GeodesicsDistance <: Metric end

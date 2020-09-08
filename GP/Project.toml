@@ -2,3 +2,9 @@ name = "BattleOfCoralSeaGP"
 uuid = "cf226877-d4be-40f0-baf9-b9adac32aa86"
 authors = ["yiyuezhuo <yiyuezhuo@gmail.com>"]
 version = "0.1.0"
+
+[deps]
+BattleOfCoralSeaUtils = "5998c608-5353-4248-982e-82ef77b8d184"
+Distances = "b4f34e82-e78d-54a5-968a-f98e89d6e8f7"
+Geodesics = "6aaf26a4-c633-11e8-35ae-8904cb805353"
+Stheno = "8188c328-b5d6-583d-959b-9690869a5511"

@@ -1,13 +1,13 @@
 
 scouting_plans = [
     (
-        name="MO Carrier Striking force 1",
+        name="MO Carrier Striking force 4 May",
         sp="MO Carrier Striking force", st=(4, 8, 0), et=(4, 11, 50),
         dist=460*1000, rot=90, rot_dist=37 * 1000, # default p
         paths=Dict(130=>(;), 140=>(;), 150=>(;))
     ),
     (
-        name="MO Carrier Striking force 2",
+        name="MO Carrier Striking force 5 May",
         sp="MO Carrier Striking force", st=(5, 4, 0), et=(5, 9, 0),
         dist=560*1000, rot=90, rot_dist=46 * 1000,
         paths=Dict(
@@ -16,7 +16,7 @@ scouting_plans = [
         )
     ),
     (
-        name="MO Carrier Striking force 3",
+        name="MO Carrier Striking force 7 May Morning",
         sp="MO Carrier Striking force", st=(7, 4, 0), et=(7, 10, 30),
         dist=463*1000, rot=90,
         paths=Dict(
@@ -26,7 +26,7 @@ scouting_plans = [
     ),
     #= scouting afternoon 7 May, lack of infomation?
     (
-        name="MO Carrier Striking force 4",
+        name="MO Carrier Striking force 7 May Afternoon",
         sp="MO Carrier Striking force", st=(7, 4, 0), et=(7, 10, 30),
         dist=463*1000, rot=90,
         paths=Dict(

@@ -16,7 +16,4 @@ include("load_utils.jl")
 include("interpolate_utils.jl")
 include("plot_utils.jl")
 
-include("exp_geodesics.jl")
-include("exp_haversine.jl")
-
 end # module
