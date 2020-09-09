@@ -6,10 +6,11 @@ using Geodesics
 using Distances
 
 using Stheno: BaseKernel, AV
-import Stheno: ew, pw
+import Stheno: ew, pw, ColVecs
 using BattleOfCoralSeaUtils: earth_dist_geodesics
 
-export ExpGeodesics, ExpHaversine, grid_xy, grid_xyt, arg_grid_xy, arg_grid_xyt
+export ExpGeodesics, ExpHaversine, grid_xy, grid_xyt, arg_grid_xy, arg_grid_xyt,
+    ExpHaversineScale, XytHaversineScale
 
 include("exp_geodesics.jl")
 include("exp_haversine.jl")

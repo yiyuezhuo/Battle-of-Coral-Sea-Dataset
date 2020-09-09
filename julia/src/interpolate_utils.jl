@@ -47,7 +47,7 @@ function gen_interpolate_records(earth_dist)
                         last_record = record_nothing
                     end
                     last_dist = earth_dist(
-                        last_key_record.x, last_key_record.y, record.x, record.y)
+                        last_record.x, last_record.y, record.x, record.y)
                     cum_sum_plus = sum(dist_l) + last_dist
                     delta_range = key_record_t - last_key_record.t
                     p_l = cumsum(dist_l) / cum_sum_plus * delta_range .+ last_key_record.t
@@ -223,9 +223,28 @@ function get_scouting(sp, ep, azimuth, dist, rot, rot_dist)
     return scouting
 end
 
+
+function get_scouting_t(st, et, sp, ep, azimuth, dist, rot, rot_dist)
+    scouting = get_scouting(sp, ep, azimuth, dist, rot, rot_dist)
+    function _scouting(t)
+        # @show st et sp ep azimuth dist rot rot_dist
+        if (t <= st) | (t >= et)
+            return nothing # type instability? Anyway it's not the bottleneck.
+        end
+        p = (t - st) / (et - st)
+        return scouting(p)
+    end
+    return _scouting
+end
+
 function get_scouting(sp::ScoutingPlan)
     return get_scouting(sp.sp, sp.ep, sp.azimuth, sp.dist, sp.rot, sp.rot_dist)
 end
+
+function get_scouting_t(sp::ScoutingPlan)
+    return get_scouting_t(sp.st, sp.et, sp.sp, sp.ep, sp.azimuth, sp.dist, sp.rot, sp.rot_dist)
+end
+
 
 function take_xy(xya_l)
     x = [xya[1] for xya in xya_l]
