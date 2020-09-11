@@ -51,7 +51,7 @@ end
 function pw(eh::XytHaversineScale, x::AV, x′::AV)
     d_xy = pw(Haversine(eh.r), ColVecs(x.X[1:2,:]), ColVecs(x′.X[1:2, :]))
     d_t = pw(SqEuclidean(), x.X[3,:], x′.X[3,:])
-    return exp.(-(d_xy ./ eh.s_xy + d_t ./ eh.s_t))
+    return exp.(.-(d_xy ./ eh.s_xy + d_t ./ eh.s_t))
 end
 
 # Unary methods.
