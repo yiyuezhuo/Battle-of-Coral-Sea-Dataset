@@ -43,3 +43,23 @@ function load_shapefile()
                           "shape_data", "ne_50m_land.shp")
     return load_shapefile(shape_path)
 end
+
+# preprocess, mainly used to simplify pyjulia usage
+
+function preprocess(fleets_path, scouting_plans_path)
+    # load data, provide a deeper helper?
+    fleets = load_dataset(fleets_path)
+    scouting_plans = load_dataset(scouting_plans_path)
+    trajectories = Trajectory.(fleets)
+    sp50 = load_shapefile()
+
+    seqs = map(x->interpolate_records(x.seq), trajectories)
+    names = map(x->x.name, trajectories)
+
+    name_to_record_int_vec = Dict(tra.name => seq for (tra, seq) in zip(trajectories, seqs))
+    expanded_plans = expand_plans(scouting_plans, name_to_record_int_vec)
+    name_to_scouting_t = Dict(name => get_scouting_t.(ep) for (name, ep) in expanded_plans)
+
+    return (;fleets, scouting_plans, trajectories, sp50, seqs, names, name_to_record_int_vec,
+            expand_plans, name_to_scouting_t)
+end
