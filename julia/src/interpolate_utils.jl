@@ -141,9 +141,9 @@ Dict{String,Any} with 8 entries:
   "name"     => "MO Carrier Striking force 1"
   "st"       => Any[4, 8, 0]
   "sp"       => "MO Carrier Striking force"
-  "rot_dist" => 37000
+  "rot_dist" => 37
   "paths"    => Dict{String,Any}("140"=>Dict{String,Any}(),"130"=>Dict{String,A…
-  "dist"     => 460000
+  "dist"     => 460
   "rot"      => 90
   "et"       => Any[4, 11, 50]
 
@@ -158,7 +158,7 @@ struct ScoutingPlan
     et::Float64 # end time
     ep::Tuple{Float64, Float64} # end point
     azimuth::Float64 # degree
-    dist::Float64 # km, while original data is encoded as m
+    dist::Float64 # km, while the data of previous version is encoded as m
     rot::Float64 # degree
     rot_dist::Float64 # km
 end
@@ -193,7 +193,7 @@ function expand_plans(scouting_plans,
             end
 
             p = ScoutingPlan(st, Tuple(sp), et, Tuple(ep), Meta.parse(azumuth), 
-                             d["dist"] / 1000, d["rot"], d["rot_dist"] / 1000) # convert m to km
+                             d["dist"], d["rot"], d["rot_dist"])
             push!(pl, p)
         end
         rd[name] = pl
