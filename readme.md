@@ -4,7 +4,17 @@ The dataset include fleet moving and scouting record. The data is not ensured to
 
 I build the dataset for my own research purpose.
 
-## Examples
+## `make` data
+
+Raw data is written in Julia to make editing easier. Further DSL may be employed.
+
+```julia
+using BattleOfCoralSeaData
+
+make() # generate `*.json` files into workspace.
+```
+
+## Usage examples
 
 ### Julia
 
@@ -49,7 +59,7 @@ scouting_plans = load_dataset("scouting_plans.json")
 name_to_record_int_vec = Dict(tra.name => seq for (tra, seq) in zip(trajectories, seqs))
 expanded_plans = expand_plans(scouting_plans, name_to_record_int_vec)
 
-expanded_plans["MO Carrier Striking force 1"]
+expanded_plans["MO Carrier Striking force 4 May"]
 #=
 3-element Array{BattleOfCoralSeaUtils.ScoutingPlan,1}:
  BattleOfCoralSeaUtils.ScoutingPlan(6240.0, (157.77770745902433, -3.777813966196954), 6470.0, (158.09957154727985, -5.30227744276514), 140.0, 460.0, 90.0, 37.0)
@@ -58,6 +68,11 @@ expanded_plans["MO Carrier Striking force 1"]
 =#
 
 # It may looks quite messy :< .
+
+using Plots
+
+r = forward_deg(160, -9, 90, 370)[1] - 160
+
 plt = plot() 
 show_crop!(sp50, 147.5, -20, 167.5, 0, raw=true)
 show_trace!(trajectories)
@@ -74,20 +89,13 @@ WIP
 
 ## Pitfall
 
-Some subtle movements are just ignored. For example, IJN covering force are concentrated at Deboyne Islands for several days, with many single ship movement. I just treat them as they had docked at Deboyne Islands until 06:30 7 May. Some small detachments is also treated as they just never happened, hence fleet looks too "perfect" acting as a whole.
+Some subtle movements are just ignored. For example, IJN covering force were being concentrated at Deboyne Islands for several days, with many sole ship movement. I just treat them as they had docked at Deboyne Islands until 06:30 7 May. Some small detachments, such as destroyer used to rescue pilot, is also treated as they just never happened, hence fleet looks too "perfect" acting as a whole.
 
-## `make` data
-
-Raw data is written in Julia to make editing easier. 
-
-```julia
-using BattleOfCoralSeaData
-
-make() # generate `*.json` files into workspace.
-```
 
 ## References
 
+* [THE BATTLE OF THE CORAL SEA, MAY 1 TO MAY 11 INCLUSIVE, 1942. STRATEGICAL AND TACTICAL ANALYSIS](https://apps.dtic.mil/dtic/tr/fulltext/u2/a003053.pdf)
+* [Army operations in the South Pacific area: Papua campaigns, 1942–1943](http://ajrp.awm.gov.au/ajrp/ajrp2.nsf/translat-print/0975972E51CE4820CA257057001AEF9B?OpenDocument#con6.1)
 * The First Team: Pacific Naval Air Combat from Pearl Harbor to Midway
 * THE CORAL SEA 1942: the first carrier battle
 * 碧血南洋: 美日珊瑚海海战

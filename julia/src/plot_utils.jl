@@ -49,6 +49,11 @@ function show_fleets!(fleets::Vector{Vector{RecordInterpolated}},
     end
 end
 
+"""
+    plot_circle!(x, y, r; particles=100)
+
+It is just pure circle plotting helper, without considering projection distorture.
+"""
 function plot_circle!(x, y, r; particles=100)
     pts = Plots.partialcircle(0, 2π, particles, r)
     pts_x, pts_y = Plots.unzip(pts)
@@ -66,4 +71,21 @@ function plot_expanded_plans!(expanded_plans::Dict{String, Vector{ScoutingPlan}}
             scatter!(x, y, markersize=1)
         end
     end
+end
+
+function make_sector_shape(base_x, base_y, deg_start, deg_end, radius; particles=100)
+	rad_start = deg_start / 180 * π
+	rad_end = deg_end / 180 * π
+	rad_vec = range(rad_start, rad_end, length=particles)
+	x_vec = base_x .+ radius * cos.(rad_vec)
+	y_vec = base_y .+ radius * sin.(rad_vec)
+	Shape([base_x; x_vec], [base_y; y_vec])
+end
+
+function make_sector_shape_geo(base_long, base_lat, deg_start, deg_end, radius; particles=100)
+	deg_vec = range(deg_start, deg_end, length=particles)
+	long_lat_vec = forward_deg.(base_long, base_lat, deg_vec, radius)
+	long_vec = map(long_lat->long_lat[1], long_lat_vec)
+	lat_vec = map(long_lat->long_lat[2], long_lat_vec)
+	Shape([base_long; long_vec], [base_lat; lat_vec])
 end
