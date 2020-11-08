@@ -89,3 +89,44 @@ function make_sector_shape_geo(base_long, base_lat, deg_start, deg_end, radius; 
 	lat_vec = map(long_lat->long_lat[2], long_lat_vec)
 	Shape([base_long; long_vec], [base_lat; lat_vec])
 end
+
+function plot_land_base_scouting!(plan, locs_dict; color=:yellow)
+	for (name, loc) in locs_dict
+		longitude, latitude = loc
+		annotate!(longitude, latitude, text(name, :black, :center, 10))
+	end
+	for (area_name, area) in zip(keys(plan), plan)
+		base_longitude, base_latitude = locs_dict[area.base]
+		s = make_sector_shape_geo(base_longitude, base_latitude, area.bearing[1], area.bearing[2], area.distance)
+		plot!(s, fillcolor=plot_color(color, 0.1))
+	end
+end
+
+function make_parallel_line_points(base_long, base_lat, deg, radius, turn_deg, edge; visible_radius=40.2336, rendezvous_percent=0.1, visible_band=true)
+	long_start, lat_start, _ = forward_deg(base_long, base_lat, turn_deg, edge)
+	long_rend, lat_rend, _ = forward_deg(long_start, lat_start, deg, radius * rendezvous_percent)
+	if visible_band
+		long_rend, lat_rend, _ = forward_deg(long_rend, lat_rend, turn_deg, visible_radius)
+	end
+	long_end, lat_end, _ = forward_deg(long_rend, lat_rend, deg, radius * (1-rendezvous_percent))
+	return long_rend, lat_rend, long_end, lat_end
+end
+
+function make_parallel_search_line_shape(base_long, base_lat, deg, radius, edge_list; visible_radius=40.2336, rendezvous_percent=0.1, visible_band=true)
+	# 25mi ≈ 40.2336km
+	# Here we will just assume that the parallel search lines make a "completed" scouting area, thus extrene edge one is considered only.
+	right_deg = (deg+90) % 360
+	left_deg = (deg-90) % 360
+	
+	right_edge = maximum(edge_list)
+	left_edge = minimum(edge_list)
+	@assert left_edge < 0
+	left_edge = -left_edge
+	
+	long_rend_left, lat_rend_left, long_end_left, lat_end_left = make_parallel_line_points(base_long, base_lat, deg, radius, left_deg, left_edge; visible_radius, rendezvous_percent, visible_band)
+	long_rend_right, lat_rend_right, long_end_right, lat_end_right = make_parallel_line_points(base_long, base_lat, deg, radius, right_deg, right_edge; visible_radius, rendezvous_percent, visible_band)
+	long_list = [base_long, long_rend_left, long_end_left, long_end_right, long_rend_right]
+	lat_list = [base_lat, lat_rend_left, lat_end_left, lat_end_right, lat_rend_right]
+	return Shape(long_list, lat_list)
+end
+
