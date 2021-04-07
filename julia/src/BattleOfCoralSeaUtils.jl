@@ -10,8 +10,8 @@ using JSON
 using Distances
 using Geodesics
 
+include("constants.jl")
 include("geodesics_utils.jl")
-
 include("load_utils.jl")
 include("interpolate_utils.jl")
 include("plot_utils.jl")

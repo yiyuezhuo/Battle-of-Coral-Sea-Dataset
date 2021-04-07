@@ -7,7 +7,6 @@ struct RecordInterpolated
     d::Float64
 end
 
-const EARTH_RADIUS = 6372.8
 
 time_stamp_to_float(t::TimeStamp) = time_stamp_to_float(t.day, t.hour, t.minute)
 time_stamp_to_float(day::Int, hour::Int, minute::Int) = Float64(day * 24 * 60 + hour * 60 + minute)

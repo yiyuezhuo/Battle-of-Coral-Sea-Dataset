@@ -4,6 +4,8 @@ using JSON
 
 export fleets, scouting_plans, make
 
+include("constants.jl")
+
 # pure data file
 include("fleets.jl")
 include("scouting_plans.jl")
